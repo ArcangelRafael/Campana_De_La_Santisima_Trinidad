@@ -1,0 +1,61 @@
+/* === BASE.CSS - ESTRUCTURA PRINCIPAL === */
+body {
+    background-color: #1a1a1a;
+    color: #d4c4a8;
+    font-family: 'Georgia', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#game-container {
+    background-color: #2b2b2b;
+    border: 3px solid #8b0000;
+    border-radius: 10px;
+    width: 900px; 
+    max-width: 95%; 
+    height: 85vh; 
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+    position: relative; 
+}
+
+#story-area {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+#action-area {
+    background-color: #111;
+    padding: 20px;
+    border-top: 2px solid #8b0000;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* === SISTEMA DE DIÁLOGOS Y NARRATIVA === */
+.mensaje-sistema { color: #88ff88; font-style: italic; }
+.mensaje-combate { color: #ff8888; }
+.separador { text-align: center; color: #555; margin: 15px 0; }
+
+/* FIX TÁCTICO: Jerarquía estricta de colores */
+.txt-comendador { color: #4c88ff; } 
+.txt-lugarteniente { color: #6ba1ff; } /* Azul heráldico brillante, reservando el rojo para el enemigo */
+.txt-clerigo { color: #a3d9a5; } 
+.txt-multitud { color: #c0c0c0; font-style: italic; } 
+.txt-sagrado { color: #ffaa00; font-weight: bold; } 
+.txt-hereje { color: #ff4c4c; font-weight: bold; } /* Exclusivo de la herejía */
+.txt-accion { color: #aaaaaa; font-style: italic; } /* Gris plata para acotaciones y movimientos */
+
+/* Facciones Oscuras (Legibles en fondo oscuro) */
+.txt-joanjoz { color: #d65c5c; font-weight: bold; } 
+.txt-lug-pagano { color: #b88a5c; font-weight: bold; } 
+.txt-pagano-dialogo { color: #c0b8b0; }

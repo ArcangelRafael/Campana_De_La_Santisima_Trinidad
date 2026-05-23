@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cruzada de la Santísima Trinidad</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/animaciones.css"> 
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/dados.css"> 
+    <link rel="stylesheet" href="css/dialogos.css"> 
+</head>
+<body>
+    <div id="game-container">
+        <div id="hud">
+            <div class="estandarte estandarte-izq">
+                <img src="assets/img/ui/banner.webp" class="estandarte-bg" alt="Estandarte">
+                <img id="emblema-izq" src="" class="estandarte-emblema" alt="Emblema">
+            </div>
+            
+            <div class="hud-stats-container">
+                <div class="stat-box" style="position: relative;">
+                    <span id="btn-nombre-hud" style="cursor: pointer;">
+                        <img id="icono-orden" class="icono-orden-hud" src="" alt="Orden">
+                        <span onclick="toggleDropdown()"><span id="nombre-jugador"></span><span id="flecha-inventario" style="display: none;"> ⏷</span></span>
+                    </span>
+                    <div id="orden-tooltip"></div>
+                    <div id="dropdown-hud" class="dropdown-menu">
+                        <button onclick="abrirInventario()">🎒 INVENTARIO</button>
+                        <button onclick="abrirCampana()">🚩 MI CAMPAÑA</button>
+                    </div>
+                </div>
+                <div class="stat-box" style="color: #c0c0c0;">
+                    <span id="btn-tienda-hud" onclick="abrirTienda()" style="cursor: pointer;">
+                        💰 Denarios: <span id="stat-denarios"></span>
+                    </span>
+                </div>
+                <div class="stat-box" style="color: #ffaa00; position: relative;" id="stat-fe-container">
+                    🕊️ Fe: <span id="stat-liderazgo"></span>
+                    <div id="fe-tooltip"></div> 
+                </div>
+            </div>
+
+            <div class="estandarte estandarte-der">
+                <img src="assets/img/ui/banner.webp" class="estandarte-bg" alt="Estandarte">
+                <img id="emblema-der" src="" class="estandarte-emblema" alt="Emblema">
+            </div>
+        </div>
+
+        <div id="story-area"></div>
+        <div id="action-area"></div>
+        
+        <div id="vn-overlay">
+            <div id="vn-scene-container">
+                <img id="vn-character-img" src="" alt="Personaje">
+                <div id="vn-dialogue-box">
+                    <div id="vn-speaker-name">Nombre</div>
+                    <div id="vn-text-content"></div>
+                    
+                    <div id="vn-input-area">
+                        <input type="text" id="vn-input-box" autocomplete="off">
+                    </div>
+                    <button id="vn-btn-next">CONTINUAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="video-overlay"><video id="game-video"></video></div>
+    <div id="tribulacion-overlay"><div id="tribulacion-box"><h3 id="trib-titulo"></h3><div id="trib-texto"></div><div id="trib-acciones"></div></div></div>
+    <div id="fe-overlay"><div id="fe-box"><h3 id="fe-titulo"></h3><div id="fe-texto"></div><div id="fe-efecto"></div><button id="fe-btn" onclick="document.getElementById('fe-overlay').style.display='none'">DEUS LO VULT</button></div></div>
+    <div id="inventario-overlay"><div id="inventario-box"><span class="close-btn" onclick="cerrarInventario()">✖</span><h3 id="inv-titulo">MORRAL</h3><div id="inv-contenido"></div></div></div>
+    <div id="tienda-overlay"><div id="tienda-box" style="width: 850px; max-height: 95vh; overflow-y: auto;"><span class="close-btn" onclick="cerrarTienda()">✖</span><h3 id="tienda-titulo" style="color:#ffaa00; margin-bottom: 15px;">RECLUTAMIENTO DE HUESTES</h3><div id="tienda-contenido"></div><div id="tienda-carrito" style="background:#111; padding: 20px; border-radius: 8px; border: 2px solid #555; margin-top: 25px;"><h4 style="margin-top:0; color:#88ff88; border-bottom: 1px solid #333; padding-bottom: 10px; text-align: left;">⚔️ FILAS DE RECLUTAMIENTO</h4><div id="carrito-items" class="grid-desplegado" style="min-height: 90px; align-items: center; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding: 15px; gap: 15px;"><span style="color:#555; font-style: italic; width:100%; text-align:center;">Las filas están vacías. Recluta hombres arriba.</span></div><div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #333; padding-top: 15px;"><div style="text-align: left; line-height: 1.5;"><span style="color:#ff4c4c; font-weight:bold; font-size: 16px;">Costo de Leva: 💰 <span id="carrito-total">0</span></span><br><span style="color:#88ff88; font-size: 16px;">Fondo Restante: 💰 <span id="carrito-restantes">0</span> Denarios</span></div><div style="display: flex; gap: 10px;"><button onclick="vaciarCarrito()" style="background:#550000; border: 1px solid #ff4c4c; font-size:14px; padding: 8px 15px;">Disolver Filas</button><button onclick="confirmarCompra()" style="background:#2d5a2d; border: 1px solid #88ff88; font-size:14px; padding: 8px 15px; color:#fff;">Sellar Pacto y Marchar</button></div></div></div></div></div>
+    <div id="campana-overlay"><div id="campana-box"><span class="close-btn" onclick="cerrarCampana()">✖</span><h3 id="campana-titulo">HUESTE TRINITARIA</h3><div id="campana-contenido"></div></div></div>
+    <div id="detalle-unidad-overlay"><div id="detalle-unidad-box"><span class="close-btn" onclick="cerrarDetalleUnidad()">✖</span><div id="campana-jerarquia-container"></div></div></div>
+
+    <div id="formacion-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.95); z-index:3000; justify-content:center; align-items:center;">
+        
+        <div id="formacion-box" style="background:#1a1a1a; border:3px double #ffaa00; border-radius:10px; padding:20px; width:950px; max-width:98%; text-align:center; color:#d4c4a8; transition: width 0.5s;">
+            <h2 id="titulo-formacion" style="color:#ffaa00; margin-top:0;">DESPLIEGUE TÁCTICO</h2>
+            
+            <div style="display:flex; justify-content:space-between; gap:15px; align-items:center; position:relative; height: 540px;">
+                
+                <div style="width:210px; flex-shrink:0; background:#0a0a0a; padding:15px; border:2px solid #333; border-radius:8px; height:540px; overflow-y:auto; box-sizing:border-box;" id="formacion-roster">
+                    <h4 id="titulo-roster" style="color:#88ff88; margin-top:0; border-bottom:1px solid #333; padding-bottom:10px;">🛡️ Tropas</h4>
+                    <div id="formacion-lista-tropas" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; min-height: 100px;"></div>
+                </div>
+
+                <div id="animacion-escena1"></div>
+
+                <div id="formacion-tablero" style="display:none;"></div>
+                <div id="formacion-picas-tablero" class="estilo-tablero-base" style="display:none;"></div>
+            </div>
+
+            <div style="margin-top:20px; height: 50px;">
+                <button id="btn-iniciar-formacion" onclick="cerrarFormacionYCombatir()" style="background:#8b0000; border:2px solid #ffaa00; color:white; font-size:18px; padding:10px 30px; letter-spacing: 2px; display:none;">SELLAR FORMACIÓN</button>
+                <button id="btn-iniciar-formacion-picas" onclick="cerrarFormacionPicas()" style="background:#2d5a2d; border:2px solid #88ff88; color:white; font-size:18px; padding:10px 30px; letter-spacing: 2px; display:none;">ALZAR MURO</button>
+                <button id="btn-tirar-dados" onclick="resolverDadosVisuales()" style="display:none; background:#ffaa00; border:2px solid #fff; color:#000; font-size:18px; font-weight:bold; padding:10px 30px; box-shadow:0 0 15px #ffaa00;">FIRMAR ESTRATEGIA (IR A BITÁCORA)</button>
+                <button id="btn-ver-reporte" onclick="cerrarMesaDeGuerra()" style="display:none; background:#111; border:2px solid #88ff88; color:#88ff88; font-size:18px; padding:10px 30px;">VER REPORTE EN BITÁCORA</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="hacktester-panel" style="position:fixed; bottom:50px; right:10px; background:rgba(0,0,0,0.9); border:2px solid #00ff00; color:#00ff00; padding:15px; z-index:9999; font-family:monospace; font-size:12px; display:none; max-width: 250px; border-radius:8px; box-shadow: 0 0 15px #00ff00; max-height: 80vh; overflow-y: auto;">
+        <h3 style="margin:0 0 10px 0; border-bottom:1px solid #00ff00; padding-bottom:5px; text-align:center;">🛠️ MODO TESTER</h3>
+        
+        <b style="color:#fff;">[TROPAS NOBLES]</b>
+        <div style="display:flex; gap:5px; margin:5px 0;">
+            <button onclick="ht_addTropa('caballero_noble')" style="flex-grow:1; background:#111; color:#0f0; border:1px solid #0f0; padding:5px;">+ Cab.</button>
+            <button onclick="ht_removeTropa('caballero_noble')" style="flex-grow:1; background:#111; color:#0f0; border:1px solid #0f0; padding:5px;">- Cab.</button>
+        </div>
+        <div style="display:flex; gap:5px; margin-bottom:5px;">
+            <button onclick="ht_addTropa('piquero_noble')" style="flex-grow:1; background:#111; color:#0f0; border:1px solid #0f0; padding:5px;">+ Piq.</button>
+            <button onclick="ht_removeTropa('piquero_noble')" style="flex-grow:1; background:#111; color:#0f0; border:1px solid #0f0; padding:5px;">- Piq.</button>
+        </div>
+        <div style="display:flex; gap:5px; margin-bottom:10px;">
+            <button onclick="ht_addTropa('ballestero_noble')" style="flex-grow:1; background:#111; color:#0f0; border:1px solid #0f0; padding:5px;">+ Ball.</button>
+            <button onclick="ht_removeTropa('ballestero_noble')" style="flex-grow:1; background:#111; color:#0f0; border:1px solid #0f0; padding:5px;">- Ball.</button>
+        </div>
+        
+        <b style="color:#fff;">[TROPAS MERCENARIAS]</b>
+        <div style="display:flex; gap:5px; margin:5px 0;">
+            <button onclick="ht_addTropa('caballero_mercenario')" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">+ Cab.</button>
+            <button onclick="ht_removeTropa('caballero_mercenario')" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">- Cab.</button>
+        </div>
+        <div style="display:flex; gap:5px; margin-bottom:5px;">
+            <button onclick="ht_addTropa('piquero_mercenario')" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">+ Piq.</button>
+            <button onclick="ht_removeTropa('piquero_mercenario')" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">- Piq.</button>
+        </div>
+        <div style="display:flex; gap:5px; margin-bottom:10px;">
+            <button onclick="ht_addTropa('ballestero_mercenario')" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">+ Ball.</button>
+            <button onclick="ht_removeTropa('ballestero_mercenario')" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">- Ball.</button>
+        </div>
+
+        <b style="color:#fff;">[SALUD DEL EJÉRCITO]</b>
+        <div style="display:flex; gap:5px; margin:5px 0 10px 0;">
+            <button onclick="ht_modVidasGeneral(-1)" style="flex-grow:1; background:#4a0000; color:#fff; border:1px solid #ff4c4c; padding:5px;">-1 Vida</button>
+            <button onclick="ht_modVidasGeneral(1)" style="flex-grow:1; background:#004a00; color:#fff; border:1px solid #88ff88; padding:5px;">+1 Vida</button>
+        </div>
+        
+        <b style="color:#fff;">[RECURSOS Y FE]</b>
+        <div style="display:flex; gap:5px; margin:5px 0;">
+            <button onclick="ht_addDenarios(50)" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">+50 Den.</button>
+            <button onclick="ht_addDenarios(-10)" style="flex-grow:1; background:#111; color:#ffaa00; border:1px solid #ffaa00; padding:5px;">-10 Den.</button>
+        </div>
+        <div style="display:flex; gap:5px; margin:5px 0 10px 0;">
+            <button onclick="ht_modFe(50)" style="flex-grow:1; background:#111; color:#1e90ff; border:1px solid #1e90ff; padding:5px;">+50 Fe</button>
+            <button onclick="ht_modFe(-10)" style="flex-grow:1; background:#111; color:#1e90ff; border:1px solid #1e90ff; padding:5px;">-10 Fe</button>
+        </div>
+
+        <b style="color:#fff;">[AJUSTES Y ESCENAS]</b>
+        <label style="display:block; margin:5px 0; background:#222; padding:5px; border:1px solid #0ff; color:#0ff; cursor:pointer; text-align:center; font-weight:bold;">
+            <input type="checkbox" id="ht-auto-fill"> 🎲 Auto-Despliegue Aleatorio
+        </label>
+        <label style="display:block; margin:5px 0; background:#222; padding:5px; border:1px solid #ff8c00; color:#ff8c00; cursor:pointer; text-align:center; font-weight:bold;">
+            <input type="checkbox" id="ht-auto-combat"> ⚡ Combate Automático
+        </label>
+        <label style="display:block; margin:5px 0; background:#222; padding:5px; border:1px solid #ff0; color:#ff0; cursor:pointer; text-align:center;">
+            <input type="checkbox" id="ht-skip-cine"> 🎬 Omitir Cinemáticas
+        </label>
+
+        <button onclick="ht_jumpTo('opciones_cap1')" style="width:100%; margin:5px 0; background:#111; color:#f0f; border:1px solid #f0f; padding:5px;">Ir a: Decisión del Puente</button>
+        <button onclick="ht_jumpTo('muro_picas')" style="width:100%; margin-bottom:5px; background:#111; color:#f0f; border:1px solid #f0f; padding:5px;">Ir a: Victoria (Muro Picas)</button>
+        <button onclick="ht_jumpTo('repliegue')" style="width:100%; margin-bottom:5px; background:#111; color:#f0f; border:1px solid #f0f; padding:5px;">Ir a: Escena Repliegue</button>
+        <button onclick="ht_jumpTo('bosque_victoria')" style="width:100%; margin-bottom:10px; background:#111; color:#f0f; border:1px solid #f0f; padding:5px;">Ir a: Victoria (Bosque)</button>
+
+        <button onclick="document.getElementById('hacktester-panel').style.display='none'" style="width:100%; background:#500; color:#fff; border:1px solid #f00; padding:8px; font-weight:bold;">CERRAR PANEL</button>
+    </div>
+    <button id="btn-open-ht" onclick="document.getElementById('hacktester-panel').style.display='block'" style="position:fixed; bottom:10px; right:10px; background:#000; border:2px solid #00ff00; color:#00ff00; z-index:9998; font-family:monospace; padding:10px; border-radius:50%; font-size:16px; cursor:pointer;">🛠️</button>
+
+    <audio id="bgm-inventario" loop><source src="assets/audio/musica_inventario.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-tienda" loop><source src="assets/audio/musica_tienda.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-campana" loop><source src="assets/audio/musica_campana.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-trib1" loop><source src="assets/audio/musica_tribulacion1.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-trib2" loop><source src="assets/audio/musica_tribulacion2.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-trib3" loop><source src="assets/audio/musica_tribulacion3.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-menu" loop><source src="assets/audio/musica_menu.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-juego" loop><source src="assets/audio/musica_juego.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-victoria" loop><source src="assets/audio/musica_victoria.mp3" type="audio/mpeg"></audio>
+    <audio id="bgm-capitulo2" loop><source src="assets/audio/musica_capitulo2.mp3" type="audio/mpeg"></audio>
+
+    <script src="js/core/database.js"></script>
+    <script src="js/core/tribulaciones.js"></script>
+    <script src="js/core/motor.js"></script>
+    <script src="js/core/inventario.js"></script> 
+    <script src="js/core/tienda.js"></script> 
+    <script src="js/core/campana.js"></script> 
+    <script src="js/core/tableros.js"></script> 
+    <script src="js/core/formacion.js"></script> 
+    <script src="js/core/dialogos.js"></script> 
+
+    <script src="js/combate/generador_hordas.js"></script> 
+    <script src="js/combate/render_combate.js"></script> 
+    <script src="js/combate/motor_combate.js"></script> 
+    <script src="js/combate/sistema_dados.js"></script> 
+    <script src="js/combate/sistema_refuerzos.js"></script> 
+
+    <script src="js/capitulos/introduccion/introduccion.js"></script>
+
+    <script src="js/capitulos/capitulo1/capitulo1.js"></script>
+    
+    <script src="js/capitulos/capitulo1/nodos/nodo_cuna.js"></script> 
+    <script src="js/capitulos/capitulo1/nodos/nodo_picas.js"></script> 
+    <script src="js/capitulos/capitulo1/nodos/nodo_picas_bosque.js"></script> 
+    <script src="js/capitulos/capitulo1/nodos/nodo_bosque.js"></script> 
+
+    <script src="js/capitulos/capitulo1/cinematicas/cine_cuna.js"></script>
+    <script src="js/capitulos/capitulo1/cinematicas/cine_picas.js"></script>
+    <script src="js/capitulos/capitulo1/cinematicas/cine_repliegue.js"></script>
+    <script src="js/capitulos/capitulo1/cinematicas/cine_bosque.js"></script>
+    <script src="js/capitulos/capitulo1/cinematicas/cine_victoria.js"></script>
+
+    <script src="js/core/hacktester.js"></script>
+</body>
+</html>
